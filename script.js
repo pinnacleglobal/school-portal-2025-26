@@ -31,11 +31,10 @@ let name="";
 
 for(let i=1;i<aw.length;i++){
 
-if(aw[i][29] && aw[i][29].trim()==code){
+if(aw[i][29] && aw[i][29]==code){
 
 admission=aw[i][1];
 name=aw[i][3];
-
 break;
 
 }
@@ -45,9 +44,7 @@ break;
 if(!admission){
 
 document.getElementById("loader").style.display="none";
-
 document.getElementById("msg").innerText="Invalid Code";
-
 return;
 
 }
@@ -67,7 +64,6 @@ for(let i=1;i<master.length;i++){
 if(master[i][1] && master[i][1]==admission){
 
 studentClass=master[i][13];
-
 break;
 
 }
@@ -88,9 +84,9 @@ let slip=fees[i][0]||"NA";
 let deposit=fees[i][5]||"NA";
 let type=fees[i][6]||"NA";
 let session=fees[i][7]||"NA";
-let tuition=cleanValue(fees[i][8]);
-let transport=cleanValue(fees[i][9]);
-let exam=cleanValue(fees[i][10]);
+let tuition=clean(fees[i][8]);
+let transport=clean(fees[i][9]);
+let exam=clean(fees[i][10]);
 let payment=fees[i][11]||"NA";
 
 table+=`
@@ -108,11 +104,12 @@ table+=`
 `;
 
 cards+=`
-<div class="fee-card">
+
+<div class="feeCard">
 
 <b>Date:</b> ${date}<br>
-<b>Slip Number:</b> ${slip}<br>
-<b>Fee Deposited:</b> ${deposit}<br>
+<b>Slip No:</b> ${slip}<br>
+<b>Fees Deposited:</b> ${deposit}<br>
 <b>Fee Type:</b> ${type}<br>
 <b>Session:</b> ${session}<br>
 <b>Tuition Months:</b> ${tuition}<br>
@@ -121,6 +118,7 @@ cards+=`
 <b>Payment Mode:</b> ${payment}
 
 </div>
+
 `;
 
 }
@@ -131,17 +129,20 @@ document.getElementById("feesTable").innerHTML=table;
 document.getElementById("cardContainer").innerHTML=cards;
 
 document.getElementById("welcome").innerText="Welcome "+name;
+
 document.getElementById("admission").innerText=admission;
+
 document.getElementById("class").innerText=studentClass;
 
 document.getElementById("loginPage").classList.add("hidden");
+
 document.getElementById("dashboard").classList.remove("hidden");
 
 document.getElementById("loader").style.display="none";
 
 }
 
-function cleanValue(v){
+function clean(v){
 
 if(!v) return "NA";
 
@@ -156,7 +157,9 @@ return v;
 function logout(){
 
 document.getElementById("dashboard").classList.add("hidden");
+
 document.getElementById("loginPage").classList.remove("hidden");
+
 document.getElementById("code").value="";
 
 }
