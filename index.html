@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student Portal</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Pinnacle Global School - Student Portal</title>
 
 <style>
 
 body{
 font-family:Arial;
+background:#f2f5fb;
 margin:0;
-background:#f3f3f3;
 text-align:center;
 }
 
 .container{
-max-width:900px;
+max-width:1000px;
 margin:auto;
 background:white;
-padding:25px;
 margin-top:30px;
+padding:25px;
 border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.15);
+box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
 
 .logo{
@@ -28,32 +30,52 @@ width:110px;
 margin-bottom:10px;
 }
 
+h1{
+color:#004aad;
+margin-bottom:5px;
+}
+
 input{
 padding:12px;
-width:250px;
+width:260px;
+border-radius:6px;
 border:1px solid #ccc;
-border-radius:5px;
 font-size:16px;
 }
 
 button{
-padding:12px 25px;
-background:#007BFF;
-color:white;
+padding:12px 26px;
 border:none;
+background:#004aad;
+color:white;
 border-radius:6px;
 font-size:16px;
 cursor:pointer;
 margin-top:10px;
 }
 
+button:hover{
+background:#003580;
+}
+
 .hidden{
 display:none;
 }
 
-/* TABLE */
+/* STUDENT INFO */
 
-.table-wrapper{
+.studentBox{
+background:#f5f8ff;
+padding:15px;
+border-radius:8px;
+margin-top:15px;
+text-align:left;
+}
+
+/* FEE TABLE */
+
+.tableBox{
+margin-top:20px;
 overflow-x:auto;
 }
 
@@ -64,41 +86,47 @@ min-width:850px;
 }
 
 th,td{
-border:1px solid #2a5db0;
-padding:8px;
-text-align:center;
+padding:10px;
+border:1px solid #ddd;
 font-size:14px;
 }
 
 th{
-background:#2a5db0;
-color:white;
-}
-
-.titleRow{
 background:#004aad;
 color:white;
-font-weight:bold;
-font-size:18px;
-text-align:center;
 }
 
-/* MOBILE CARD VIEW */
+tbody tr:nth-child(even){
+background:#f5f8ff;
+}
 
-.card-container{
+/* GOLD HEADER */
+
+.feeHeader{
+background:#D4AF37;
+color:white;
+font-size:20px;
+padding:10px;
+border-radius:6px;
+margin-top:25px;
+}
+
+/* MOBILE CARDS */
+
+.cardContainer{
 display:none;
 }
 
-.fee-card{
+.feeCard{
 background:white;
-border-radius:10px;
-box-shadow:0 0 8px rgba(0,0,0,0.1);
 padding:15px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
 margin-top:15px;
 text-align:left;
 }
 
-.fee-card b{
+.feeCard b{
 color:#004aad;
 }
 
@@ -117,8 +145,8 @@ align-items:center;
 }
 
 .spinner{
-border:6px solid #f3f3f3;
-border-top:6px solid #007BFF;
+border:6px solid #eee;
+border-top:6px solid #004aad;
 border-radius:50%;
 width:50px;
 height:50px;
@@ -126,19 +154,19 @@ animation:spin 1s linear infinite;
 }
 
 @keyframes spin{
-0%{transform:rotate(0deg);}
-100%{transform:rotate(360deg);}
+0%{transform:rotate(0)}
+100%{transform:rotate(360deg)}
 }
 
-/* MOBILE SWITCH */
+/* MOBILE */
 
 @media(max-width:700px){
 
-.table-wrapper{
+.tableBox{
 display:none;
 }
 
-.card-container{
+.cardContainer{
 display:block;
 }
 
@@ -165,7 +193,7 @@ width:90%;
 
 <img src="images/logo.png" class="logo">
 
-<h2>Student Portal</h2>
+<h1>Student Portal</h1>
 
 <input id="code" placeholder="Enter Login Code">
 
@@ -185,30 +213,39 @@ width:90%;
 
 <h2 id="welcome"></h2>
 
+<div class="studentBox">
+
 <p><b>Admission Number:</b> <span id="admission"></span></p>
+
 <p><b>Class:</b> <span id="class"></span></p>
+
+</div>
+
+<div class="feeHeader">
+Fee Details
+</div>
 
 <!-- DESKTOP TABLE -->
 
-<div class="table-wrapper">
+<div class="tableBox">
 
 <table>
 
-<tr class="titleRow">
-<td colspan="9">📊 Fee Details</td>
-</tr>
+<thead>
 
 <tr>
 <th>Date</th>
-<th>Slip Number</th>
-<th>Fee Deposited</th>
+<th>Slip No</th>
+<th>Fees Deposited</th>
 <th>Fee Type</th>
 <th>Session</th>
-<th>Tuition Fee Months</th>
-<th>Transport Fee Months</th>
-<th>Exam Fee Months</th>
+<th>Tuition Months</th>
+<th>Transport Months</th>
+<th>Exam Months</th>
 <th>Payment Mode</th>
 </tr>
+
+</thead>
 
 <tbody id="feesTable"></tbody>
 
@@ -218,7 +255,7 @@ width:90%;
 
 <!-- MOBILE CARDS -->
 
-<div id="cardContainer" class="card-container"></div>
+<div id="cardContainer" class="cardContainer"></div>
 
 <br>
 
