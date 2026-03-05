@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Portal</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f3f3f3;
+text-align:center;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:white;
+padding:25px;
+margin-top:30px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.15);
+}
+
+.logo{
+width:110px;
+margin-bottom:10px;
+}
+
+input{
+padding:12px;
+width:250px;
+border:1px solid #ccc;
+border-radius:5px;
+font-size:16px;
+}
+
+button{
+padding:12px 25px;
+background:#007BFF;
+color:white;
+border:none;
+border-radius:5px;
+font-size:16px;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:disabled{
+background:#ccc;
+}
+
+.hidden{
+display:none;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+font-size:14px;
+}
+
+th,td{
+border:1px solid #444;
+padding:8px;
+}
+
+th{
+background:#d8b07d;
+}
+
+.titleRow{
+background:#e0a54c;
+font-weight:bold;
+}
+
+#loader{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(255,255,255,0.8);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.spinner{
+border:6px solid #f3f3f3;
+border-top:6px solid #007BFF;
+border-radius:50%;
+width:50px;
+height:50px;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
+}
+
+@media(max-width:700px){
+table{
+font-size:12px;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- LOGIN -->
+
+<div id="loginPage">
+
+<img src="images/logo.png" class="logo">
+
+<h2>Student Portal</h2>
+
+<input id="code" placeholder="Enter Login Code">
+
+<br>
+
+<button onclick="login()">Login</button>
+
+<p id="msg" style="color:red"></p>
+
+</div>
+
+<!-- DASHBOARD -->
+
+<div id="dashboard" class="hidden">
+
+<img src="images/logo.png" class="logo">
+
+<h2 id="welcome"></h2>
+
+<p><b>Admission Number:</b> <span id="admission"></span></p>
+<p><b>Class:</b> <span id="class"></span></p>
+
+<table>
+
+<tr class="titleRow">
+<td colspan="9">Fee Details</td>
+</tr>
+
+<tr>
+<th>Date</th>
+<th>Slip Number</th>
+<th>Fee Deposited</th>
+<th>Fee Type</th>
+<th>Session</th>
+<th>Tuition Fee Months</th>
+<th>Transport Fee Months</th>
+<th>Exam Fee Months</th>
+<th>Payment Mode</th>
+</tr>
+
+<tbody id="feesTable"></tbody>
+
+</table>
+
+<br>
+
+<button onclick="logout()">Logout</button>
+
+</div>
+
+</div>
+
+<div id="loader">
+<div class="spinner"></div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
