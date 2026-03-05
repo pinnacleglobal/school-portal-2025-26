@@ -77,6 +77,7 @@ break;
 const fees=await getSheet("Fees Collection");
 
 let table="";
+let cards="";
 
 for(let i=1;i<fees.length;i++){
 
@@ -106,24 +107,34 @@ table+=`
 </tr>
 `;
 
-}
+cards+=`
+<div class="fee-card">
+
+<b>Date:</b> ${date}<br>
+<b>Slip Number:</b> ${slip}<br>
+<b>Fee Deposited:</b> ${deposit}<br>
+<b>Fee Type:</b> ${type}<br>
+<b>Session:</b> ${session}<br>
+<b>Tuition Months:</b> ${tuition}<br>
+<b>Transport Months:</b> ${transport}<br>
+<b>Exam Months:</b> ${exam}<br>
+<b>Payment Mode:</b> ${payment}
+
+</div>
+`;
 
 }
 
-if(table==""){
-table=`<tr><td colspan="9">No Fee Records Found</td></tr>`;
 }
 
 document.getElementById("feesTable").innerHTML=table;
+document.getElementById("cardContainer").innerHTML=cards;
 
 document.getElementById("welcome").innerText="Welcome "+name;
-
 document.getElementById("admission").innerText=admission;
-
 document.getElementById("class").innerText=studentClass;
 
 document.getElementById("loginPage").classList.add("hidden");
-
 document.getElementById("dashboard").classList.remove("hidden");
 
 document.getElementById("loader").style.display="none";
@@ -145,9 +156,7 @@ return v;
 function logout(){
 
 document.getElementById("dashboard").classList.add("hidden");
-
 document.getElementById("loginPage").classList.remove("hidden");
-
 document.getElementById("code").value="";
 
 }
