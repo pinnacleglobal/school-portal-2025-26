@@ -41,7 +41,7 @@ padding:12px 25px;
 background:#007BFF;
 color:white;
 border:none;
-border-radius:5px;
+border-radius:6px;
 font-size:16px;
 cursor:pointer;
 margin-top:10px;
@@ -55,26 +55,44 @@ background:#ccc;
 display:none;
 }
 
+/* TABLE WRAPPER FOR MOBILE SCROLL */
+
+.table-wrapper{
+overflow-x:auto;
+margin-top:20px;
+}
+
+/* TABLE STYLE */
+
 table{
 width:100%;
 border-collapse:collapse;
-margin-top:20px;
-font-size:14px;
+min-width:850px;
 }
 
 th,td{
-border:1px solid #444;
+border:1px solid #2a5db0;
 padding:8px;
+text-align:center;
+font-size:14px;
 }
 
 th{
-background:#d8b07d;
+background:#2a5db0;
+color:white;
 }
 
 .titleRow{
-background:#e0a54c;
+background:#1f4fa3;
+color:white;
 font-weight:bold;
 }
+
+tbody tr:nth-child(even){
+background:#f2f7ff;
+}
+
+/* LOADER */
 
 #loader{
 position:fixed;
@@ -102,10 +120,19 @@ animation:spin 1s linear infinite;
 100%{transform:rotate(360deg);}
 }
 
+/* MOBILE IMPROVEMENTS */
+
 @media(max-width:700px){
-table{
-font-size:12px;
+
+.container{
+margin:10px;
+padding:15px;
 }
+
+input{
+width:90%;
+}
+
 }
 
 </style>
@@ -144,6 +171,8 @@ font-size:12px;
 <p><b>Admission Number:</b> <span id="admission"></span></p>
 <p><b>Class:</b> <span id="class"></span></p>
 
+<div class="table-wrapper">
+
 <table>
 
 <tr class="titleRow">
@@ -165,6 +194,8 @@ font-size:12px;
 <tbody id="feesTable"></tbody>
 
 </table>
+
+</div>
 
 <br>
 
