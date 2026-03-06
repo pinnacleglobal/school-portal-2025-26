@@ -63,7 +63,7 @@ async function loadPortal(adm, name) {
     document.getElementById("class").innerText = "Class : " + studentClass;
     document.getElementById("adm").innerText = "Admission No : " + adm;
 
-    // Fetch AW sheet again for photo, parent, phone, address
+    // Fetch AW sheet for photo, parent, phone, address
     let awURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`;
     let awData = await fetch(awURL).then(res => res.json());
     let awRows = awData.values;
@@ -103,7 +103,8 @@ async function loadPortal(adm, name) {
             let transport = feeRows[i][9] || "NA";
             let exam = feeRows[i][10] || "NA";
 
-            table += `<tr>
+            // Card layout for mobile + table row for desktop
+            table += `<tr class="fee-card">
                 <td>${feeRows[i][1]}</td>
                 <td>${feeRows[i][0]}</td>
                 <td>${feeRows[i][5]}</td>
