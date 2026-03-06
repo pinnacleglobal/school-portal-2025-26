@@ -58,8 +58,22 @@ background:gray;
 .loader{
 display:none;
 text-align:center;
-padding:20px;
-font-size:18px;
+padding:30px;
+}
+
+.spinner{
+border:6px solid #eee;
+border-top:6px solid #0b3d91;
+border-radius:50%;
+width:40px;
+height:40px;
+animation:spin 1s linear infinite;
+margin:auto;
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
 }
 
 .profile{
@@ -80,6 +94,10 @@ margin-bottom:10px;
 .info{
 font-size:15px;
 margin:6px 0;
+}
+
+.label{
+font-weight:bold;
 }
 
 .section-title{
@@ -111,8 +129,8 @@ font-size:14px;
 }
 
 th{
-background:white;
-color:black;
+background:#0b3d91;
+color:white;
 }
 
 tr:nth-child(even){
@@ -125,11 +143,18 @@ padding:15px;
 }
 
 .fee-card{
-background:white;
 border-radius:12px;
 padding:16px;
 margin-bottom:15px;
 box-shadow:0 2px 8px rgba(0,0,0,0.12);
+}
+
+.fee-card:nth-child(odd){
+background:#ffffff;
+}
+
+.fee-card:nth-child(even){
+background:#e8f1ff;
 }
 
 @media(max-width:600px){
@@ -173,7 +198,11 @@ margin:20px;
 </div>
 
 <div class="loader" id="loader">
+
+<div class="spinner"></div>
+<br>
 Loading Student Data...
+
 </div>
 
 <div id="portal" style="display:none">
@@ -181,12 +210,13 @@ Loading Student Data...
 <div class="profile">
 
 <div class="student-name" id="studentName"></div>
-<div class="info" id="class"></div>
-<div class="info" id="adm"></div>
-<div class="info" id="father"></div>
-<div class="info" id="mother"></div>
-<div class="info" id="phone"></div>
-<div class="info" id="address"></div>
+
+<div class="info"><span class="label">Class :</span> <span id="class"></span></div>
+<div class="info"><span class="label">Admission Number :</span> <span id="adm"></span></div>
+<div class="info"><span class="label">Father's Name :</span> <span id="father"></span></div>
+<div class="info"><span class="label">Mother's Name :</span> <span id="mother"></span></div>
+<div class="info"><span class="label">Phone Number :</span> <span id="phone"></span></div>
+<div class="info"><span class="label">Address :</span> <span id="address"></span></div>
 
 </div>
 
@@ -201,13 +231,14 @@ Fee Details
 <thead>
 <tr>
 <th>Date</th>
-<th>Slip No</th>
-<th>Amount</th>
+<th>Slip Number</th>
+<th>Amount Paid</th>
 <th>Fee Type</th>
 <th>Session</th>
-<th>Tuition</th>
-<th>Transport</th>
-<th>Exam</th>
+<th>Tuition Fee Months</th>
+<th>Transport Fee Months</th>
+<th>Exam Fee Months</th>
+<th>Payment Mode</th>
 </tr>
 </thead>
 
