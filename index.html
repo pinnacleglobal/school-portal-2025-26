@@ -126,26 +126,33 @@ td {
         display: none;
     }
 
+    tbody {
+        display: block;
+    }
+
     tbody tr {
         display: block;
-        margin-bottom: 12px;
-        padding: 12px;
-        border-radius: 8px;
-        box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        background: #ffffff;
+        transition: transform 0.2s;
     }
 
     tbody tr:nth-child(odd) {
         background: #e6f0ff;
     }
 
-    tbody tr:nth-child(even) {
-        background: #ffffff;
+    tbody tr:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 12px rgba(0,0,0,0.15);
     }
 
     tbody td {
         display: block;
         text-align: left;
-        padding: 6px 0;
+        padding: 8px 0;
         border: none;
     }
 
