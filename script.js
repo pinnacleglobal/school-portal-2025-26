@@ -6,7 +6,7 @@ const feesSheet = "Fees Collection";
 const awSheet = "AW";
 
 async function login() {
-    let code = document.getElementById("loginCode").value.trim();
+    const code = document.getElementById("loginCode").value.trim();
     if (!code) {
         alert("Enter Login Code");
         return;
@@ -16,14 +16,15 @@ async function login() {
     document.getElementById("loader").style.display = "block";
 
     try {
-        // Fetch AW sheet once
-        const awURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`;
-        const awData = await fetch(awURL).then(res => res.json());
+        // Fetch AW sheet
+        const awResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`);
+        if (!awResp.ok) throw new Error("Failed to fetch AW sheet");
+        const awData = await awResp.json();
         const awRows = awData.values;
+        if (!awRows) throw new Error("AW sheet is empty");
 
-        // Find student row by login code (AD → index 29)
-        const studentRow = awRows.find(row => row[29] && row[29].trim() === code);
-
+        // Find student by login code (AD → index 29)
+        const studentRow = awRows.find(row => row[29]?.trim() === code);
         if (!studentRow) {
             alert("Invalid Login Code");
             document.getElementById("loginBtn").disabled = false;
@@ -31,29 +32,28 @@ async function login() {
             return;
         }
 
-        const admission = studentRow[1]; // B
-        const studentName = studentRow[3]; // D
+        const admission = studentRow[1] || "NA";
+        const studentName = studentRow[3] || "NA";
         const father = studentRow[6] || "NA";
         const mother = studentRow[5] || "NA";
         const phone = studentRow[22] || "NA";
         const address = studentRow[7] || "NA";
-        let photoUrl = studentRow[28] || "images/default.png"; // AC
+        let photoUrl = studentRow[28] || "images/default.png";
 
         if (photoUrl.includes("drive.google.com")) {
-            const fileIdMatch = photoUrl.match(/\/d\/([a-zA-Z0-9_-]+)\//);
-            if (fileIdMatch && fileIdMatch[1]) {
-                photoUrl = `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
-            }
+            const match = photoUrl.match(/\/d\/([a-zA-Z0-9_-]+)\//);
+            if (match?.[1]) photoUrl = `https://drive.google.com/uc?export=view&id=${match[1]}`;
         }
 
         // Fetch Master sheet for class
-        const masterURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`;
-        const masterData = await fetch(masterURL).then(res => res.json());
-        const masterRows = masterData.values;
-        const masterRow = masterRows.find(row => row[1] == admission);
-        const studentClass = masterRow ? masterRow[13] || "NA" : "NA";
+        const masterResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`);
+        if (!masterResp.ok) throw new Error("Failed to fetch Master sheet");
+        const masterData = await masterResp.json();
+        const masterRows = masterData.values || [];
+        const masterRow = masterRows.find(row => row[1] === admission);
+        const studentClass = masterRow?.[13] || "NA";
 
-        // Populate student details
+        // Populate student info
         document.getElementById("studentName").innerText = "Welcome " + studentName;
         document.getElementById("class").innerText = "Class : " + studentClass;
         document.getElementById("adm").innerText = "Admission No : " + admission;
@@ -64,43 +64,40 @@ async function login() {
 
         const imgEl = document.getElementById("photo");
         imgEl.src = photoUrl;
-        imgEl.onerror = () => { imgEl.src = "images/default.png"; };
+        imgEl.onerror = () => imgEl.src = "images/default.png";
 
         // Fetch Fees sheet
-        const feesURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`;
-        const feesData = await fetch(feesURL).then(res => res.json());
-        const feeRows = feesData.values;
+        const feesResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`);
+        if (!feesResp.ok) throw new Error("Failed to fetch Fees sheet");
+        const feesData = await feesResp.json();
+        const feeRows = feesData.values || [];
 
         let table = "";
         for (let i = 1; i < feeRows.length; i++) {
-            if (feeRows[i][2] == admission) {
-                const tuition = feeRows[i][8] || "NA";
-                const transport = feeRows[i][9] || "NA";
-                const exam = feeRows[i][10] || "NA";
-
+            const row = feeRows[i];
+            if (row?.[2] === admission) {
                 table += `<tr class="fee-card">
-                    <td>${feeRows[i][1]}</td>
-                    <td>${feeRows[i][0]}</td>
-                    <td>${feeRows[i][5]}</td>
-                    <td>${feeRows[i][6]}</td>
-                    <td>${feeRows[i][7]}</td>
-                    <td>${tuition}</td>
-                    <td>${transport}</td>
-                    <td>${exam}</td>
+                    <td>${row[1] || "NA"}</td>
+                    <td>${row[0] || "NA"}</td>
+                    <td>${row[5] || "NA"}</td>
+                    <td>${row[6] || "NA"}</td>
+                    <td>${row[7] || "NA"}</td>
+                    <td>${row[8] || "NA"}</td>
+                    <td>${row[9] || "NA"}</td>
+                    <td>${row[10] || "NA"}</td>
                 </tr>`;
             }
         }
         document.getElementById("feeTable").innerHTML = table;
 
-        // Show portal
         document.getElementById("loader").style.display = "none";
         document.getElementById("portal").style.display = "block";
 
     } catch (err) {
         console.error(err);
-        alert("Error loading student data. Please try again.");
-        document.getElementById("loginBtn").disabled = false;
+        alert("Error loading data: " + err.message);
         document.getElementById("loader").style.display = "none";
+        document.getElementById("loginBtn").disabled = false;
     }
 }
 
