@@ -15,11 +15,15 @@ async function login() {
     try {
         const awResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`);
         const awData = await awResp.json();
-        const awRows = awData.values;
-        if (!awRows) throw new Error("AW sheet empty");
+        const awRows = awData.values || [];
 
         const studentRow = awRows.find(r => r[29]?.trim() === code);
-        if (!studentRow) { alert("Invalid Login Code"); document.getElementById("loader").style.display="none"; document.getElementById("loginBtn").disabled=false; return; }
+        if (!studentRow) { 
+            alert("Invalid Login Code"); 
+            document.getElementById("loader").style.display="none"; 
+            document.getElementById("loginBtn").disabled=false; 
+            return; 
+        }
 
         const admission = studentRow[1] || "NA";
         const studentName = studentRow[3] || "NA";
@@ -28,7 +32,7 @@ async function login() {
         const phone = studentRow[22] || "NA";
         const address = studentRow[7] || "NA";
 
-        // Handle Google Drive photo URL (both /d/FILE_ID/ and open?id=FILE_ID)
+        // Convert Google Drive URL to direct image
         let photoUrl = studentRow[28] || "images/default.png";
         if (photoUrl.includes("drive.google.com")) {
             let fileId = null;
@@ -39,6 +43,14 @@ async function login() {
             if (fileId) photoUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
         }
 
+        const imgEl = document.getElementById("photo");
+        const loaderEl = document.getElementById("photoLoader");
+        loaderEl.style.display = "block";
+        imgEl.onload = () => loaderEl.style.display = "none";
+        imgEl.src = photoUrl;
+        imgEl.onerror = () => { imgEl.src = "images/default.png"; loaderEl.style.display = "none"; };
+
+        // Master sheet to get class
         const masterResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`);
         const masterData = await masterResp.json();
         const masterRows = masterData.values || [];
@@ -53,18 +65,15 @@ async function login() {
         document.getElementById("phone").innerText = "Phone : " + phone;
         document.getElementById("address").innerText = "Address : " + address;
 
-        const imgEl = document.getElementById("photo");
-        imgEl.src = photoUrl;
-        imgEl.onerror = () => imgEl.src = "images/default.png";
-
+        // Fees
         const feesResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`);
         const feesData = await feesResp.json();
         const feeRows = feesData.values || [];
 
         let table = "";
-        for (let i = 1; i < feeRows.length; i++) {
+        for (let i=1;i<feeRows.length;i++){
             const row = feeRows[i];
-            if (row?.[2] === admission) {
+            if (row?.[2] === admission){
                 table += `<tr class="fee-card">
                     <td>${row[1]||"NA"}</td>
                     <td>${row[0]||"NA"}</td>
@@ -79,19 +88,19 @@ async function login() {
         }
         document.getElementById("feeTable").innerHTML = table;
 
-        // Hide login, show portal
+        // Show portal
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("loader").style.display = "none";
         document.getElementById("portal").style.display = "block";
 
-    } catch(err) {
+    } catch(err){
         console.error(err);
-        alert("Error loading data: "+err.message);
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("loginBtn").disabled = false;
+        alert("Error loading data: " + err.message);
+        document.getElementById("loader").style.display="none";
+        document.getElementById("loginBtn").disabled=false;
     }
 }
 
-function logout() {
+function logout(){
     location.reload();
 }
