@@ -7,21 +7,17 @@ const awSheet = "AW";
 
 async function login() {
     const code = document.getElementById("loginCode").value.trim();
-    if (!code) {
-        alert("Enter Login Code");
-        return;
-    }
+    if (!code) { alert("Enter Login Code"); return; }
 
     document.getElementById("loginBtn").disabled = true;
     document.getElementById("loader").style.display = "block";
 
     try {
-        // Fetch AW sheet
         const awResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`);
         const awData = await awResp.json();
         const awRows = awData.values || [];
 
-        const studentRow = awRows.find(r => r[29]?.trim() === code); // AD column
+        const studentRow = awRows.find(r => r[29]?.trim() === code);
         if (!studentRow) {
             alert("Invalid Login Code");
             document.getElementById("loader").style.display = "none";
@@ -36,29 +32,7 @@ async function login() {
         const phone = studentRow[22] || "NA";
         const address = studentRow[7] || "NA";
 
-        // Get student photo URL from BH (index 59)
-        let photoUrl = studentRow[59] || "";
-        const imgEl = document.getElementById("photo");
-        const loaderEl = document.getElementById("photoLoader");
-        const linkEl = document.getElementById("photoLink");
-
-        loaderEl.style.display = "block";
-        imgEl.onload = () => loaderEl.style.display = "none";
-        imgEl.onerror = () => {
-            imgEl.src = "images/default.png";
-            loaderEl.style.display = "none";
-        };
-
-        if (photoUrl) {
-            imgEl.src = photoUrl;
-            linkEl.href = photoUrl;
-            linkEl.style.display = "inline-block";
-        } else {
-            imgEl.src = "images/default.png";
-            linkEl.style.display = "none";
-        }
-
-        // Fetch Master sheet for class info
+        // Master sheet for class
         const masterResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`);
         const masterData = await masterResp.json();
         const masterRows = masterData.values || [];
@@ -74,7 +48,7 @@ async function login() {
         document.getElementById("phone").innerText = "Phone : " + phone;
         document.getElementById("address").innerText = "Address : " + address;
 
-        // Fetch Fees sheet
+        // Fees sheet
         const feesResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`);
         const feesData = await feesResp.json();
         const feeRows = feesData.values || [];
