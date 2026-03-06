@@ -5,14 +5,14 @@
 <title>Student Portal</title>
 
 <style>
-body{
+body {
     font-family: Arial;
     margin: 0;
     background: #f2f5ff;
 }
 
 /* HEADER */
-.header{
+.header {
     background: #0b3d91;
     text-align: center;
     padding: 20px;
@@ -20,18 +20,18 @@ body{
 }
 
 /* LOGO */
-.logo{
+.logo {
     width: 140px;
     margin-bottom: 10px;
 }
 
 /* LOGIN */
-.login-box{
+.login-box {
     text-align: center;
     padding: 30px;
 }
 
-input{
+input {
     padding: 12px;
     width: 230px;
     font-size: 16px;
@@ -39,7 +39,7 @@ input{
     border-radius: 4px;
 }
 
-button{
+button {
     padding: 12px 25px;
     font-size: 16px;
     background: #0b3d91;
@@ -49,12 +49,12 @@ button{
     cursor: pointer;
 }
 
-button:disabled{
+button:disabled {
     background: gray;
 }
 
 /* LOADER */
-.loader{
+.loader {
     display: none;
     text-align: center;
     padding: 20px;
@@ -62,7 +62,7 @@ button:disabled{
 }
 
 /* PROFILE */
-.profile{
+.profile {
     text-align: center;
     background: white;
     margin: 15px;
@@ -71,31 +71,48 @@ button:disabled{
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.profile img{
+.profile img {
     width: 130px;
     height: 130px;
     border-radius: 50%;
     border: 4px solid #ddd;
+    object-fit: cover;
 }
 
-.student-name{
+#photoLoader {
+    font-size: 14px;
+    color: #0b3d91;
+    margin-top: 5px;
+}
+
+/* Clickable link under photo */
+#photoLink {
+    display: none;
+    font-size: 14px;
+    color: #0b3d91;
+    margin-top: 5px;
+    text-decoration: underline;
+}
+
+/* Student info */
+.student-name {
     font-size: 22px;
     font-weight: bold;
     margin-top: 10px;
 }
 
-.center-detail{
+.center-detail {
     font-size: 16px;
     margin-top: 4px;
 }
 
-.info{
+.info {
     margin-top: 15px;
     font-size: 15px;
 }
 
-/* GOLD HEADER */
-.section-title{
+/* Section header */
+.section-title {
     background: #d4af37;
     color: black;
     padding: 12px;
@@ -107,77 +124,75 @@ button:disabled{
 }
 
 /* TABLE */
-.table-container{
+.table-container {
     margin: 10px;
 }
 
-table{
+table {
     width: 100%;
     border-collapse: collapse;
     background: white;
 }
 
-th, td{
-    border: 1px solid #ccc;
+th {
+    background: #0b3d91;
+    color: white;
     padding: 10px;
+    font-size: 14px;
+}
+
+td {
+    padding: 10px;
+    border: 1px solid #ccc;
     text-align: center;
     font-size: 14px;
 }
 
-th{
-    background: #0b3d91;
-    color: white;
-}
-
-/* Alternate row color */
-tbody tr:nth-child(even){
-    background-color: #e6f0ff;
-}
-
 /* MOBILE */
-@media(max-width:600px){
-    table, thead{
-        width: 100%;
-    }
-    thead{
+@media(max-width:600px) {
+    table, thead {
         display: none;
     }
-    tbody tr{
+
+    tbody tr {
         display: block;
-        background: #f9f9f9;
+        background: white;
         margin-bottom: 12px;
         padding: 10px;
         border-radius: 8px;
-        border: 1px solid #ccc;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.1);
     }
-    tbody td{
+
+    tbody td {
         display: block;
         text-align: left;
         padding: 6px 10px;
-        border: none;
     }
-    tbody td::before{
+
+    tbody td::before {
         font-weight: bold;
         display: block;
         color: #0b3d91;
     }
-    td:nth-child(1)::before { content: "Date"; }
-    td:nth-child(2)::before { content: "Slip"; }
-    td:nth-child(3)::before { content: "Amount"; }
-    td:nth-child(4)::before { content: "Fee Type"; }
-    td:nth-child(5)::before { content: "Session"; }
-    td:nth-child(6)::before { content: "Tuition Months"; }
-    td:nth-child(7)::before { content: "Transport Months"; }
-    td:nth-child(8)::before { content: "Exam Months"; }
+
+    td:nth-child(1)::before {content:"Date";}
+    td:nth-child(2)::before {content:"Slip No.";}
+    td:nth-child(3)::before {content:"Amount";}
+    td:nth-child(4)::before {content:"Fee Type";}
+    td:nth-child(5)::before {content:"Session";}
+    td:nth-child(6)::before {content:"Tuition Months";}
+    td:nth-child(7)::before {content:"Transport Months";}
+    td:nth-child(8)::before {content:"Exam Months";}
 }
 
-.logout{
+.logout {
     text-align: center;
     margin: 20px;
 }
-</style>
 
+</style>
 </head>
+
 <body>
 
 <div class="header">
@@ -192,13 +207,15 @@ tbody tr:nth-child(even){
     <button id="loginBtn" onclick="login()">Login</button>
 </div>
 
-<div class="loader" id="loader">
-    Loading Student Data...
-</div>
+<div class="loader" id="loader">Loading Student Data...</div>
 
 <div id="portal" style="display:none">
     <div class="profile">
-        <img id="photo" src="images/default.png">
+        <img id="photo">
+        <div id="photoLoader">Loading...</div>
+        <br>
+        <a id="photoLink" href="#" target="_blank">Click to view image</a>
+
         <div class="student-name" id="studentName"></div>
         <div class="center-detail" id="class"></div>
         <div class="center-detail" id="adm"></div>
@@ -208,16 +225,14 @@ tbody tr:nth-child(even){
         <div class="info" id="address"></div>
     </div>
 
-    <div class="section-title">
-        Fee Details
-    </div>
+    <div class="section-title">Fee Details</div>
 
     <div class="table-container">
         <table>
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Slip</th>
+                    <th>Slip No.</th>
                     <th>Amount</th>
                     <th>Fee Type</th>
                     <th>Session</th>
