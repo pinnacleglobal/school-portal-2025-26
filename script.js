@@ -54,7 +54,7 @@ async function loadPortal(adm, name) {
 
     let studentClass = "";
     for (let i = 1; i < rows.length; i++) {
-        if (rows[i][1] == adm) studentClass = rows[i][13];
+        if (rows[i][1] == adm) studentClass = rows[i][13]; // Column N
     }
 
     document.getElementById("class").innerText = "Class : " + studentClass;
@@ -65,9 +65,10 @@ async function loadPortal(adm, name) {
     let awData = await fetch(awURL).then(res => res.json());
     let awRows = awData.values;
 
+    let photoUrl = "images/default.png";
     for (let i = 1; i < awRows.length; i++) {
         if (awRows[i][1] == adm) {
-            let photoUrl = (awRows[i][28] || "images/default.png").trim();
+            photoUrl = (awRows[i][28] || "images/default.png").trim(); // Column AC
             if (photoUrl.includes("drive.google.com")) {
                 const fileIdMatch = photoUrl.match(/\/d\/([a-zA-Z0-9_-]+)\//);
                 if (fileIdMatch && fileIdMatch[1]) {
@@ -75,23 +76,19 @@ async function loadPortal(adm, name) {
                 }
             }
 
-            const imgEl = document.getElementById("photo");
-            imgEl.src = photoUrl;
-            imgEl.onerror = () => { imgEl.src = "images/default.png"; };
-
             document.getElementById("father").innerText = "Father : " + (awRows[i][6] || "NA");
             document.getElementById("mother").innerText = "Mother : " + (awRows[i][5] || "NA");
             document.getElementById("phone").innerText = "Phone : " + (awRows[i][22] || "NA");
             document.getElementById("address").innerText = "Address : " + (awRows[i][7] || "NA");
 
-            // Wait for image to load before showing portal
-            imgEl.onload = () => {
-                document.getElementById("loader").style.display = "none";
-                document.getElementById("portal").style.display = "block";
-            };
             break;
         }
     }
+
+    // Set photo src and fallback
+    const imgEl = document.getElementById("photo");
+    imgEl.src = photoUrl;
+    imgEl.onerror = () => { imgEl.src = "images/default.png"; };
 
     // Fees Collection
     let feesURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`;
@@ -118,6 +115,10 @@ async function loadPortal(adm, name) {
         }
     }
     document.getElementById("feeTable").innerHTML = table;
+
+    // Show portal & hide loader
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("portal").style.display = "block";
 }
 
 // LOGOUT
