@@ -52,6 +52,11 @@ async function login() {
         const feeRows = feesData.values || [];
 
         const isMobile = window.innerWidth <= 600;
+
+        // Show/hide containers
+        document.getElementById("feeTable").style.display = isMobile ? "none" : "table";
+        document.getElementById("feeCards").style.display = isMobile ? "block" : "none";
+
         let table = "";
         let cards = "";
 
@@ -93,7 +98,7 @@ async function login() {
             }
         }
 
-        document.getElementById("feeTable").innerHTML = table;
+        document.getElementById("feeTable").querySelector("tbody").innerHTML = table;
         document.getElementById("feeCards").innerHTML = cards;
 
         document.getElementById("loginBox").style.display = "none";
