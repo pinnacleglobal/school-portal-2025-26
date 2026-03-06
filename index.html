@@ -126,37 +126,32 @@ td {
         display: none;
     }
 
-    tbody {
-        display: block;
+    #feeTable {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
     }
 
-    tbody tr {
+    #feeTable tr {
         display: block;
-        margin-bottom: 15px;
+        background: #ffffff;
         padding: 15px;
         border-radius: 12px;
         box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-        background: #ffffff;
-        transition: transform 0.2s;
     }
 
-    tbody tr:nth-child(odd) {
+    #feeTable tr:nth-child(odd) {
         background: #e6f0ff;
     }
 
-    tbody tr:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 12px rgba(0,0,0,0.15);
-    }
-
-    tbody td {
+    #feeTable td {
         display: block;
         text-align: left;
-        padding: 8px 0;
+        padding: 6px 0;
         border: none;
     }
 
-    tbody td::before {
+    #feeTable td::before {
         font-weight: bold;
         display: block;
         color: #0b3d91;
