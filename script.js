@@ -32,14 +32,12 @@ async function login() {
         const phone = studentRow[22] || "NA";
         const address = studentRow[7] || "NA";
 
-        // Master sheet for class
         const masterResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`);
         const masterData = await masterResp.json();
         const masterRows = masterData.values || [];
         const masterRow = masterRows.find(r => r[1] === admission);
         const studentClass = masterRow?.[13] || "NA";
 
-        // Fill profile info
         document.getElementById("studentName").innerText = "Welcome " + studentName;
         document.getElementById("class").innerText = "Class : " + studentClass;
         document.getElementById("adm").innerText = "Admission No : " + admission;
@@ -48,7 +46,6 @@ async function login() {
         document.getElementById("phone").innerText = "Phone : " + phone;
         document.getElementById("address").innerText = "Address : " + address;
 
-        // Fees sheet
         const feesResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`);
         const feesData = await feesResp.json();
         const feeRows = feesData.values || [];
@@ -71,7 +68,6 @@ async function login() {
         }
         document.getElementById("feeTable").innerHTML = table;
 
-        // Show portal
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("loader").style.display = "none";
         document.getElementById("portal").style.display = "block";
