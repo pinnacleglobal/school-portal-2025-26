@@ -13,7 +13,7 @@ body{
 
 /* HEADER */
 .header{
-    background: #0b3d91; /* solid dark blue */
+    background: #0b3d91;
     text-align: center;
     padding: 20px;
     color: white;
@@ -71,12 +71,34 @@ button:disabled{
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.profile img{
+/* PHOTO CIRCLE */
+.photo-container{
     width: 130px;
     height: 130px;
     border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
     border: 4px solid #ddd;
-    object-fit: cover; /* prevent jerking */
+    background: #f0f0f0;
+    position: relative;
+}
+
+.photo-container img{
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    display: block;
+}
+
+/* SPINNER INSIDE PHOTO */
+#photoLoader{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    color: #0b3d91;
+    display: none;
 }
 
 .student-name{
@@ -126,16 +148,15 @@ th, td{
 }
 
 th{
-    background: #0b3d91; /* solid color */
+    background: #0b3d91;
     color: white;
 }
 
-/* Alternate row color */
 tbody tr:nth-child(even){
     background-color: #e6f0ff;
 }
 
-/* MOBILE: Card layout for fee details */
+/* MOBILE: Fee cards */
 @media(max-width:600px){
     table thead{
         display: none;
@@ -202,7 +223,10 @@ tbody tr:nth-child(even){
 
 <div id="portal" style="display:none">
     <div class="profile">
-        <img id="photo" src="images/default.png">
+        <div class="photo-container">
+            <img id="photo" src="images/default.png">
+            <div id="photoLoader">Loading...</div>
+        </div>
         <div class="student-name" id="studentName"></div>
         <div class="center-detail" id="class"></div>
         <div class="center-detail" id="adm"></div>
