@@ -5,6 +5,7 @@ const masterSheet = "Master Data 25 (New)";
 const feesSheet = "Fees Collection";
 const awSheet = "AW";
 
+// LOGIN FUNCTION
 async function login() {
     let code = document.getElementById("loginCode").value.trim();
     if (!code) {
@@ -15,6 +16,7 @@ async function login() {
     document.getElementById("loginBtn").disabled = true;
     document.getElementById("loader").style.display = "block";
 
+    // Fetch AW sheet to check login code
     let awURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`;
     let awData = await fetch(awURL).then(res => res.json());
     let awRows = awData.values;
@@ -23,9 +25,9 @@ async function login() {
     let studentName = "";
 
     for (let i = 1; i < awRows.length; i++) {
-        if (awRows[i][29] && awRows[i][29].trim() == code) {
-            admission = awRows[i][1];
-            studentName = awRows[i][3];
+        if (awRows[i][29] && awRows[i][29].trim() === code) { // Column AD = 29
+            admission = awRows[i][1];      // Column B = admission
+            studentName = awRows[i][3];    // Column D = student name
             break;
         }
     }
@@ -40,10 +42,12 @@ async function login() {
     loadPortal(admission, studentName);
 }
 
+// LOAD STUDENT PORTAL
 async function loadPortal(adm, name) {
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("studentName").innerText = "Welcome " + name;
 
+    // Fetch Master Sheet for class
     let masterURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`;
     let masterData = await fetch(masterURL).then(res => res.json());
     let rows = masterData.values;
@@ -51,7 +55,7 @@ async function loadPortal(adm, name) {
     let studentClass = "";
     for (let i = 1; i < rows.length; i++) {
         if (rows[i][1] == adm) {
-            studentClass = rows[i][13];
+            studentClass = rows[i][13]; // Column N = 13
             break;
         }
     }
@@ -59,14 +63,26 @@ async function loadPortal(adm, name) {
     document.getElementById("class").innerText = "Class : " + studentClass;
     document.getElementById("adm").innerText = "Admission No : " + adm;
 
-    // AW sheet details
+    // Fetch AW sheet again for photo, parent, phone, address
     let awURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`;
     let awData = await fetch(awURL).then(res => res.json());
     let awRows = awData.values;
 
     for (let i = 1; i < awRows.length; i++) {
         if (awRows[i][1] == adm) {
-            document.getElementById("photo").src = awRows[i][59] || "images/default.png";
+            // Column AC = 28 for photo
+            let photoUrl = awRows[i][28] || "images/default.png";
+
+            // Convert Google Drive link to direct image URL
+            if (photoUrl.includes("drive.google.com")) {
+                const fileIdMatch = photoUrl.match(/\/d\/(.*?)\//);
+                if (fileIdMatch && fileIdMatch[1]) {
+                    photoUrl = `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
+                }
+            }
+
+            document.getElementById("photo").src = photoUrl;
+
             document.getElementById("father").innerText = "Father : " + (awRows[i][6] || "NA");
             document.getElementById("mother").innerText = "Mother : " + (awRows[i][5] || "NA");
             document.getElementById("phone").innerText = "Phone : " + (awRows[i][22] || "NA");
@@ -75,14 +91,14 @@ async function loadPortal(adm, name) {
         }
     }
 
-    // Fees Collection
+    // Fetch Fees Collection
     let feesURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`;
     let feesData = await fetch(feesURL).then(res => res.json());
     let feeRows = feesData.values;
 
     let table = "";
     for (let i = 1; i < feeRows.length; i++) {
-        if (feeRows[i][2] == adm) {
+        if (feeRows[i][2] == adm) { // Column C = 2 = admission
             let tuition = feeRows[i][8] || "NA";
             let transport = feeRows[i][9] || "NA";
             let exam = feeRows[i][10] || "NA";
@@ -106,6 +122,7 @@ async function loadPortal(adm, name) {
     document.getElementById("portal").style.display = "block";
 }
 
+// LOGOUT
 function logout() {
     location.reload();
 }
