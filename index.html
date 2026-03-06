@@ -63,28 +63,24 @@ button:disabled {
 
 /* PROFILE INFO */
 .profile {
-    text-align: center;
+    text-align: left;
     background: white;
     margin: 15px;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    line-height: 1.6;
 }
 
 .student-name {
     font-size: 22px;
     font-weight: bold;
-    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-.center-detail {
+.center-detail, .info {
     font-size: 16px;
-    margin-top: 4px;
-}
-
-.info {
-    margin-top: 15px;
-    font-size: 15px;
+    margin-bottom: 5px;
 }
 
 /* Section header */
@@ -133,15 +129,15 @@ td {
     tbody tr {
         display: block;
         margin-bottom: 12px;
-        padding: 10px;
+        padding: 12px;
         border-radius: 8px;
         box-shadow: 0 1px 5px rgba(0,0,0,0.1);
     }
 
-    /* Alternating light-blue backgrounds for cards */
     tbody tr:nth-child(odd) {
         background: #e6f0ff;
     }
+
     tbody tr:nth-child(even) {
         background: #ffffff;
     }
@@ -149,7 +145,7 @@ td {
     tbody td {
         display: block;
         text-align: left;
-        padding: 6px 10px;
+        padding: 6px 0;
         border: none;
     }
 
@@ -157,6 +153,7 @@ td {
         font-weight: bold;
         display: block;
         color: #0b3d91;
+        margin-bottom: 2px;
     }
 
     td:nth-child(1)::before {content:"Date";}
