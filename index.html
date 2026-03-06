@@ -19,7 +19,6 @@ body {
     color: white;
 }
 
-/* LOGO */
 .logo {
     width: 140px;
     margin-bottom: 10px;
@@ -95,7 +94,7 @@ button:disabled {
     text-align: center;
 }
 
-/* TABLE */
+/* DESKTOP TABLE */
 .table-container {
     margin: 10px;
 }
@@ -120,52 +119,35 @@ td {
     font-size: 14px;
 }
 
-/* MOBILE: Fee cards */
+/* MOBILE CARDS */
 @media(max-width:600px) {
-    table, thead {
+    table, thead, tbody {
         display: none;
     }
-
-    #feeTable {
+    #feeCards {
         display: flex;
         flex-direction: column;
         gap: 12px;
+        margin: 10px;
     }
-
-    #feeTable tr {
-        display: block;
+    .fee-card {
         background: #ffffff;
-        padding: 15px;
         border-radius: 12px;
         box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
     }
-
-    #feeTable tr:nth-child(odd) {
-        background: #e6f0ff;
+    .fee-card:nth-child(odd) { background: #e6f0ff; }
+    .fee-card div {
+        font-size: 14px;
     }
-
-    #feeTable td {
-        display: block;
-        text-align: left;
-        padding: 6px 0;
-        border: none;
-    }
-
-    #feeTable td::before {
+    .fee-card span {
         font-weight: bold;
-        display: block;
         color: #0b3d91;
-        margin-bottom: 2px;
+        margin-right: 5px;
     }
-
-    td:nth-child(1)::before {content:"Date";}
-    td:nth-child(2)::before {content:"Slip No.";}
-    td:nth-child(3)::before {content:"Amount";}
-    td:nth-child(4)::before {content:"Fee Type";}
-    td:nth-child(5)::before {content:"Session";}
-    td:nth-child(6)::before {content:"Tuition Months";}
-    td:nth-child(7)::before {content:"Transport Months";}
-    td:nth-child(8)::before {content:"Exam Months";}
 }
 
 .logout {
@@ -205,6 +187,7 @@ td {
     <div class="section-title">Fee Details</div>
 
     <div class="table-container">
+        <!-- Desktop Table -->
         <table>
             <thead>
                 <tr>
@@ -220,6 +203,8 @@ td {
             </thead>
             <tbody id="feeTable"></tbody>
         </table>
+        <!-- Mobile Cards -->
+        <div id="feeCards"></div>
     </div>
 
     <div class="logout">
