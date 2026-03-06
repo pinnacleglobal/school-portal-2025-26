@@ -1,86 +1,230 @@
-const sheetID = "1TBykyZx-eRMBDrRGBGGA8p_49iHlVDKN3wt9wijHJWM";
-const apiKey = "AIzaSyB5VIy4kIySW7bVrjNYMpL5rkqZ7Oe758E";
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Portal</title>
 
-const masterSheet = "Master Data 25 (New)";
-const feesSheet = "Fees Collection";
-const awSheet = "AW";
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+    background: #f2f5ff;
+}
 
-async function login() {
-    const code = document.getElementById("loginCode").value.trim();
-    if (!code) { alert("Enter Login Code"); return; }
+/* HEADER */
+.header {
+    background: #0b3d91;
+    text-align: center;
+    padding: 20px;
+    color: white;
+}
 
-    document.getElementById("loginBtn").disabled = true;
-    document.getElementById("loader").style.display = "block";
+/* LOGO */
+.logo {
+    width: 140px;
+    margin-bottom: 10px;
+}
 
-    try {
-        const awResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`);
-        const awData = await awResp.json();
-        const awRows = awData.values || [];
+/* LOGIN */
+.login-box {
+    text-align: center;
+    padding: 30px;
+}
 
-        const studentRow = awRows.find(r => r[29]?.trim() === code);
-        if (!studentRow) {
-            alert("Invalid Login Code");
-            document.getElementById("loader").style.display = "none";
-            document.getElementById("loginBtn").disabled = false;
-            return;
-        }
+input {
+    padding: 12px;
+    width: 230px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 
-        const admission = studentRow[1] || "NA";
-        const studentName = studentRow[3] || "NA";
-        const father = studentRow[6] || "NA";
-        const mother = studentRow[5] || "NA";
-        const phone = studentRow[22] || "NA";
-        const address = studentRow[7] || "NA";
+button {
+    padding: 12px 25px;
+    font-size: 16px;
+    background: #0b3d91;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
-        const masterResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`);
-        const masterData = await masterResp.json();
-        const masterRows = masterData.values || [];
-        const masterRow = masterRows.find(r => r[1] === admission);
-        const studentClass = masterRow?.[13] || "NA";
+button:disabled {
+    background: gray;
+}
 
-        // Fill profile info with comma after Welcome
-        document.getElementById("studentName").innerText = "Welcome, " + studentName;
-        document.getElementById("class").innerText = "Class : " + studentClass;
-        document.getElementById("adm").innerText = "Admission No : " + admission;
-        document.getElementById("father").innerText = "Father's Name : " + father;
-        document.getElementById("mother").innerText = "Mother's Name : " + mother;
-        document.getElementById("phone").innerText = "Phone No : " + phone;
-        document.getElementById("address").innerText = "Address : " + address;
+/* LOADER */
+.loader {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+}
 
-        const feesResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`);
-        const feesData = await feesResp.json();
-        const feeRows = feesData.values || [];
+/* PROFILE INFO */
+.profile {
+    text-align: center;
+    background: white;
+    margin: 15px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    line-height: 1.6;
+}
 
-        let table = "";
-        for (let i = 1; i < feeRows.length; i++) {
-            const row = feeRows[i];
-            if (row?.[2] === admission) {
-                table += `<tr class="fee-card">
-                    <td>${row[1] || "NA"}</td>
-                    <td>${row[0] || "NA"}</td>
-                    <td>${row[5] || "NA"}</td>
-                    <td>${row[6] || "NA"}</td>
-                    <td>${row[7] || "NA"}</td>
-                    <td>${row[8] || "NA"}</td>
-                    <td>${row[9] || "NA"}</td>
-                    <td>${row[10] || "NA"}</td>
-                </tr>`;
-            }
-        }
-        document.getElementById("feeTable").innerHTML = table;
+.student-name {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
 
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("portal").style.display = "block";
+.center-detail, .info {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
 
-    } catch (err) {
-        console.error(err);
-        alert("Error loading data: " + err.message);
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("loginBtn").disabled = false;
+/* Section header */
+.section-title {
+    background: #d4af37;
+    color: black;
+    padding: 12px;
+    margin: 15px;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* TABLE */
+.table-container {
+    margin: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th {
+    background: #0b3d91;
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+}
+
+td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* MOBILE: Fee cards */
+@media(max-width:600px) {
+    table, thead {
+        display: none;
     }
+
+    tbody tr {
+        display: block;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+
+    tbody tr:nth-child(odd) {
+        background: #e6f0ff;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #ffffff;
+    }
+
+    tbody td {
+        display: block;
+        text-align: left;
+        padding: 6px 0;
+        border: none;
+    }
+
+    tbody td::before {
+        font-weight: bold;
+        display: block;
+        color: #0b3d91;
+        margin-bottom: 2px;
+    }
+
+    td:nth-child(1)::before {content:"Date";}
+    td:nth-child(2)::before {content:"Slip No.";}
+    td:nth-child(3)::before {content:"Amount";}
+    td:nth-child(4)::before {content:"Fee Type";}
+    td:nth-child(5)::before {content:"Session";}
+    td:nth-child(6)::before {content:"Tuition Months";}
+    td:nth-child(7)::before {content:"Transport Months";}
+    td:nth-child(8)::before {content:"Exam Months";}
 }
 
-function logout() {
-    location.reload();
+.logout {
+    text-align: center;
+    margin: 20px;
 }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <img src="images/logo.png" class="logo">
+    <h2>Student Fee Portal</h2>
+</div>
+
+<div class="login-box" id="loginBox">
+    <h3>Student Login</h3>
+    <input type="text" id="loginCode" placeholder="Enter Login Code">
+    <br><br>
+    <button id="loginBtn" onclick="login()">Login</button>
+</div>
+
+<div class="loader" id="loader">Loading Student Data...</div>
+
+<div id="portal" style="display:none">
+    <div class="profile">
+        <div class="student-name" id="studentName"></div>
+        <div class="center-detail" id="class"></div>
+        <div class="center-detail" id="adm"></div>
+        <div class="info" id="father"></div>
+        <div class="info" id="mother"></div>
+        <div class="info" id="phone"></div>
+        <div class="info" id="address"></div>
+    </div>
+
+    <div class="section-title">Fee Details</div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Slip No.</th>
+                    <th>Amount</th>
+                    <th>Fee Type</th>
+                    <th>Session</th>
+                    <th>Tuition</th>
+                    <th>Transport</th>
+                    <th>Exam</th>
+                </tr>
+            </thead>
+            <tbody id="feeTable"></tbody>
+        </table>
+    </div>
+
+    <div class="logout">
+        <button onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
