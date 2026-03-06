@@ -38,6 +38,7 @@ async function login() {
         const masterRow = masterRows.find(r => r[1] === admission);
         const studentClass = masterRow?.[13] || "NA";
 
+        // Fill profile info
         document.getElementById("studentName").innerText = "Welcome, " + studentName;
         document.getElementById("class").innerText = "Class : " + studentClass;
         document.getElementById("adm").innerText = "Admission No : " + admission;
@@ -50,8 +51,10 @@ async function login() {
         const feesData = await feesResp.json();
         const feeRows = feesData.values || [];
 
+        const isMobile = window.innerWidth <= 600;
         let table = "";
         let cards = "";
+
         for (let i = 1; i < feeRows.length; i++) {
             const row = feeRows[i];
             if (row?.[2] === admission) {
@@ -64,27 +67,29 @@ async function login() {
                 const r9 = row[9] || "NA";
                 const r10 = row[10] || "NA";
 
-                table += `<tr>
-                    <td>${r1}</td>
-                    <td>${r0}</td>
-                    <td>${r5}</td>
-                    <td>${r6}</td>
-                    <td>${r7}</td>
-                    <td>${r8}</td>
-                    <td>${r9}</td>
-                    <td>${r10}</td>
-                </tr>`;
-
-                cards += `<div class="fee-card">
-                    <div><span>Date:</span>${r1}</div>
-                    <div><span>Slip No.:</span>${r0}</div>
-                    <div><span>Amount:</span>${r5}</div>
-                    <div><span>Fee Type:</span>${r6}</div>
-                    <div><span>Session:</span>${r7}</div>
-                    <div><span>Tuition Months:</span>${r8}</div>
-                    <div><span>Transport Months:</span>${r9}</div>
-                    <div><span>Exam Months:</span>${r10}</div>
-                </div>`;
+                if (!isMobile) {
+                    table += `<tr>
+                        <td>${r1}</td>
+                        <td>${r0}</td>
+                        <td>${r5}</td>
+                        <td>${r6}</td>
+                        <td>${r7}</td>
+                        <td>${r8}</td>
+                        <td>${r9}</td>
+                        <td>${r10}</td>
+                    </tr>`;
+                } else {
+                    cards += `<div class="fee-card">
+                        <div><span>Date:</span>${r1}</div>
+                        <div><span>Slip No.:</span>${r0}</div>
+                        <div><span>Amount:</span>${r5}</div>
+                        <div><span>Fee Type:</span>${r6}</div>
+                        <div><span>Session:</span>${r7}</div>
+                        <div><span>Tuition Months:</span>${r8}</div>
+                        <div><span>Transport Months:</span>${r9}</div>
+                        <div><span>Exam Months:</span>${r10}</div>
+                    </div>`;
+                }
             }
         }
 
