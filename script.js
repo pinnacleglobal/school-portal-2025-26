@@ -38,12 +38,13 @@ async function login() {
         const masterRow = masterRows.find(r => r[1] === admission);
         const studentClass = masterRow?.[13] || "NA";
 
-        document.getElementById("studentName").innerText = "Welcome " + studentName;
+        // Fill profile info with comma after Welcome
+        document.getElementById("studentName").innerText = "Welcome, " + studentName;
         document.getElementById("class").innerText = "Class : " + studentClass;
         document.getElementById("adm").innerText = "Admission No : " + admission;
-        document.getElementById("father").innerText = "Father : " + father;
-        document.getElementById("mother").innerText = "Mother : " + mother;
-        document.getElementById("phone").innerText = "Phone : " + phone;
+        document.getElementById("father").innerText = "Father's Name : " + father;
+        document.getElementById("mother").innerText = "Mother's Name : " + mother;
+        document.getElementById("phone").innerText = "Phone No : " + phone;
         document.getElementById("address").innerText = "Address : " + address;
 
         const feesResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`);
