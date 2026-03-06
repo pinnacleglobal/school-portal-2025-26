@@ -5,30 +5,12 @@ const masterSheet = "Master Data 25 (New)";
 const feesSheet = "Fees Collection";
 const awSheet = "AW";
 
-// Convert Google Drive URL to direct image URL
-function convertDriveUrl(url) {
-    if (!url) return "images/default.png";
-    let fileId = null;
-
-    // /d/FILE_ID/ style
-    const match1 = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (match1?.[1]) fileId = match1[1];
-
-    // open?id=FILE_ID style
-    const match2 = url.match(/open\?id=([a-zA-Z0-9_-]+)/);
-    if (match2?.[1]) fileId = match2[1];
-
-    // /file/d/FILE_ID/view style
-    const match3 = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-    if (match3?.[1]) fileId = match3[1];
-
-    if (fileId) return `https://drive.google.com/uc?export=view&id=${fileId}`;
-    return url; // fallback, if not a recognized Drive URL
-}
-
 async function login() {
     const code = document.getElementById("loginCode").value.trim();
-    if (!code) { alert("Enter Login Code"); return; }
+    if (!code) {
+        alert("Enter Login Code");
+        return;
+    }
 
     document.getElementById("loginBtn").disabled = true;
     document.getElementById("loader").style.display = "block";
@@ -39,12 +21,13 @@ async function login() {
         const awData = await awResp.json();
         const awRows = awData.values || [];
 
+        // Find student by login code (AD column, index 29)
         const studentRow = awRows.find(r => r[29]?.trim() === code);
-        if (!studentRow) { 
-            alert("Invalid Login Code"); 
-            document.getElementById("loader").style.display="none"; 
-            document.getElementById("loginBtn").disabled=false; 
-            return; 
+        if (!studentRow) {
+            alert("Invalid Login Code");
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("loginBtn").disabled = false;
+            return;
         }
 
         const admission = studentRow[1] || "NA";
@@ -54,16 +37,18 @@ async function login() {
         const phone = studentRow[22] || "NA";
         const address = studentRow[7] || "NA";
 
-        // Handle Google Drive photo URL
-        const photoUrlRaw = studentRow[28] || "";
-        const photoUrl = convertDriveUrl(photoUrlRaw);
+        // Get student photo URL from column BH (index 59)
+        let photoUrl = studentRow[59] || "images/default.png";
 
         const imgEl = document.getElementById("photo");
         const loaderEl = document.getElementById("photoLoader");
-        loaderEl.style.display = "block";
 
+        loaderEl.style.display = "block";
         imgEl.onload = () => loaderEl.style.display = "none";
-        imgEl.onerror = () => { imgEl.src = "images/default.png"; loaderEl.style.display = "none"; };
+        imgEl.onerror = () => {
+            imgEl.src = "images/default.png";
+            loaderEl.style.display = "none";
+        };
         imgEl.src = photoUrl;
 
         // Fetch Master sheet for class info
@@ -73,6 +58,7 @@ async function login() {
         const masterRow = masterRows.find(r => r[1] === admission);
         const studentClass = masterRow?.[13] || "NA";
 
+        // Fill profile info
         document.getElementById("studentName").innerText = "Welcome " + studentName;
         document.getElementById("class").innerText = "Class : " + studentClass;
         document.getElementById("adm").innerText = "Admission No : " + admission;
@@ -87,18 +73,18 @@ async function login() {
         const feeRows = feesData.values || [];
 
         let table = "";
-        for (let i=1;i<feeRows.length;i++){
+        for (let i = 1; i < feeRows.length; i++) {
             const row = feeRows[i];
-            if (row?.[2] === admission){
+            if (row?.[2] === admission) {
                 table += `<tr class="fee-card">
-                    <td>${row[1]||"NA"}</td>
-                    <td>${row[0]||"NA"}</td>
-                    <td>${row[5]||"NA"}</td>
-                    <td>${row[6]||"NA"}</td>
-                    <td>${row[7]||"NA"}</td>
-                    <td>${row[8]||"NA"}</td>
-                    <td>${row[9]||"NA"}</td>
-                    <td>${row[10]||"NA"}</td>
+                    <td>${row[1] || "NA"}</td>
+                    <td>${row[0] || "NA"}</td>
+                    <td>${row[5] || "NA"}</td>
+                    <td>${row[6] || "NA"}</td>
+                    <td>${row[7] || "NA"}</td>
+                    <td>${row[8] || "NA"}</td>
+                    <td>${row[9] || "NA"}</td>
+                    <td>${row[10] || "NA"}</td>
                 </tr>`;
             }
         }
@@ -109,14 +95,14 @@ async function login() {
         document.getElementById("loader").style.display = "none";
         document.getElementById("portal").style.display = "block";
 
-    } catch(err){
+    } catch (err) {
         console.error(err);
         alert("Error loading data: " + err.message);
-        document.getElementById("loader").style.display="none";
-        document.getElementById("loginBtn").disabled=false;
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("loginBtn").disabled = false;
     }
 }
 
-function logout(){
+function logout() {
     location.reload();
 }
