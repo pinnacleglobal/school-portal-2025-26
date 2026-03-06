@@ -21,8 +21,7 @@ async function login() {
         const awData = await awResp.json();
         const awRows = awData.values || [];
 
-        // Find student by login code (AD column, index 29)
-        const studentRow = awRows.find(r => r[29]?.trim() === code);
+        const studentRow = awRows.find(r => r[29]?.trim() === code); // AD column
         if (!studentRow) {
             alert("Invalid Login Code");
             document.getElementById("loader").style.display = "none";
@@ -37,11 +36,11 @@ async function login() {
         const phone = studentRow[22] || "NA";
         const address = studentRow[7] || "NA";
 
-        // Get student photo URL from column BH (index 59)
-        let photoUrl = studentRow[59] || "images/default.png";
-
+        // Get student photo URL from BH (index 59)
+        let photoUrl = studentRow[59] || "";
         const imgEl = document.getElementById("photo");
         const loaderEl = document.getElementById("photoLoader");
+        const linkEl = document.getElementById("photoLink");
 
         loaderEl.style.display = "block";
         imgEl.onload = () => loaderEl.style.display = "none";
@@ -49,7 +48,15 @@ async function login() {
             imgEl.src = "images/default.png";
             loaderEl.style.display = "none";
         };
-        imgEl.src = photoUrl;
+
+        if (photoUrl) {
+            imgEl.src = photoUrl;
+            linkEl.href = photoUrl;
+            linkEl.style.display = "inline-block";
+        } else {
+            imgEl.src = "images/default.png";
+            linkEl.style.display = "none";
+        }
 
         // Fetch Master sheet for class info
         const masterResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`);
