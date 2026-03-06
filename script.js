@@ -7,30 +7,19 @@ const awSheet = "AW";
 
 async function login() {
     const code = document.getElementById("loginCode").value.trim();
-    if (!code) {
-        alert("Enter Login Code");
-        return;
-    }
+    if (!code) { alert("Enter Login Code"); return; }
 
     document.getElementById("loginBtn").disabled = true;
     document.getElementById("loader").style.display = "block";
 
     try {
-        // Fetch AW sheet
         const awResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`);
-        if (!awResp.ok) throw new Error("Failed to fetch AW sheet");
         const awData = await awResp.json();
         const awRows = awData.values;
         if (!awRows) throw new Error("AW sheet empty");
 
-        // Find student by login code (AD → index 29)
         const studentRow = awRows.find(r => r[29]?.trim() === code);
-        if (!studentRow) {
-            alert("Invalid Login Code");
-            document.getElementById("loginBtn").disabled = false;
-            document.getElementById("loader").style.display = "none";
-            return;
-        }
+        if (!studentRow) { alert("Invalid Login Code"); document.getElementById("loader").style.display="none"; document.getElementById("loginBtn").disabled=false; return; }
 
         const admission = studentRow[1] || "NA";
         const studentName = studentRow[3] || "NA";
@@ -38,22 +27,24 @@ async function login() {
         const mother = studentRow[5] || "NA";
         const phone = studentRow[22] || "NA";
         const address = studentRow[7] || "NA";
-        let photoUrl = studentRow[28] || "images/default.png";
 
-        // Convert Drive link to direct image
+        // Handle Google Drive photo URL (both /d/FILE_ID/ and open?id=FILE_ID)
+        let photoUrl = studentRow[28] || "images/default.png";
         if (photoUrl.includes("drive.google.com")) {
-            const match = photoUrl.match(/\/d\/([a-zA-Z0-9_-]+)\//);
-            if (match?.[1]) photoUrl = `https://drive.google.com/uc?export=view&id=${match[1]}`;
+            let fileId = null;
+            const match1 = photoUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            const match2 = photoUrl.match(/open\?id=([a-zA-Z0-9_-]+)/);
+            if (match1?.[1]) fileId = match1[1];
+            else if (match2?.[1]) fileId = match2[1];
+            if (fileId) photoUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
         }
 
-        // Fetch Master sheet for class
         const masterResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`);
         const masterData = await masterResp.json();
         const masterRows = masterData.values || [];
         const masterRow = masterRows.find(r => r[1] === admission);
         const studentClass = masterRow?.[13] || "NA";
 
-        // Populate student info
         document.getElementById("studentName").innerText = "Welcome " + studentName;
         document.getElementById("class").innerText = "Class : " + studentClass;
         document.getElementById("adm").innerText = "Admission No : " + admission;
@@ -66,7 +57,6 @@ async function login() {
         imgEl.src = photoUrl;
         imgEl.onerror = () => imgEl.src = "images/default.png";
 
-        // Fetch Fees sheet
         const feesResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`);
         const feesData = await feesResp.json();
         const feeRows = feesData.values || [];
@@ -76,14 +66,14 @@ async function login() {
             const row = feeRows[i];
             if (row?.[2] === admission) {
                 table += `<tr class="fee-card">
-                    <td>${row[1] || "NA"}</td>
-                    <td>${row[0] || "NA"}</td>
-                    <td>${row[5] || "NA"}</td>
-                    <td>${row[6] || "NA"}</td>
-                    <td>${row[7] || "NA"}</td>
-                    <td>${row[8] || "NA"}</td>
-                    <td>${row[9] || "NA"}</td>
-                    <td>${row[10] || "NA"}</td>
+                    <td>${row[1]||"NA"}</td>
+                    <td>${row[0]||"NA"}</td>
+                    <td>${row[5]||"NA"}</td>
+                    <td>${row[6]||"NA"}</td>
+                    <td>${row[7]||"NA"}</td>
+                    <td>${row[8]||"NA"}</td>
+                    <td>${row[9]||"NA"}</td>
+                    <td>${row[10]||"NA"}</td>
                 </tr>`;
             }
         }
@@ -94,11 +84,11 @@ async function login() {
         document.getElementById("loader").style.display = "none";
         document.getElementById("portal").style.display = "block";
 
-    } catch (err) {
+    } catch(err) {
         console.error(err);
-        alert("Error loading data: " + err.message);
-        document.getElementById("loginBtn").disabled = false;
+        alert("Error loading data: "+err.message);
         document.getElementById("loader").style.display = "none";
+        document.getElementById("loginBtn").disabled = false;
     }
 }
 
