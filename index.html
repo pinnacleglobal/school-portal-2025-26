@@ -125,13 +125,18 @@ th, td{
 }
 
 th{
-    background: #0b3d91;
+    background: linear-gradient(90deg, #0b3d91, #3a6fd1);
     color: white;
 }
 
 /* Alternate row color */
 tbody tr:nth-child(even){
     background-color: #e6f0ff;
+}
+
+/* Hover effect for desktop rows */
+tbody tr:hover{
+    background-color: #cce0ff;
 }
 
 /* MOBILE: Card layout for fee details */
@@ -142,10 +147,10 @@ tbody tr:nth-child(even){
     tbody tr.fee-card{
         display: block;
         background: #e6f0ff;
-        margin-bottom: 12px;
-        padding: 12px;
-        border-radius: 8px;
-        box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+        margin-bottom: 14px;
+        padding: 14px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         border: 1px solid #ccc;
     }
     tbody tr.fee-card:nth-child(even){
@@ -154,14 +159,15 @@ tbody tr:nth-child(even){
     tbody td{
         display: block;
         text-align: left;
-        padding: 6px 8px;
+        padding: 8px 10px;
         border: none;
+        font-size: 14px;
     }
     tbody td::before{
         font-weight: bold;
         display: block;
         color: #0b3d91;
-        margin-bottom: 2px;
+        margin-bottom: 4px;
     }
     td:nth-child(1)::before { content: "Date"; }
     td:nth-child(2)::before { content: "Slip No."; }
