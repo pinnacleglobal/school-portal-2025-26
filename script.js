@@ -38,7 +38,6 @@ async function login() {
         const masterRow = masterRows.find(r => r[1] === admission);
         const studentClass = masterRow?.[13] || "NA";
 
-        // Profile info centered
         document.getElementById("studentName").innerText = "Welcome, " + studentName;
         document.getElementById("class").innerText = "Class : " + studentClass;
         document.getElementById("adm").innerText = "Admission No : " + admission;
@@ -55,7 +54,7 @@ async function login() {
         for (let i = 1; i < feeRows.length; i++) {
             const row = feeRows[i];
             if (row?.[2] === admission) {
-                table += `<tr class="fee-card">
+                table += `<tr>
                     <td>${row[1] || "NA"}</td>
                     <td>${row[0] || "NA"}</td>
                     <td>${row[5] || "NA"}</td>
