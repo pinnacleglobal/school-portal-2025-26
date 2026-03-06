@@ -134,35 +134,37 @@ tbody tr:nth-child(even){
     background-color: #e6f0ff;
 }
 
-/* MOBILE */
+/* MOBILE: Card layout for fee details */
 @media(max-width:600px){
-    table, thead{
-        width: 100%;
-    }
-    thead{
+    table thead{
         display: none;
     }
-    tbody tr{
+    tbody tr.fee-card{
         display: block;
-        background: #f9f9f9;
+        background: #e6f0ff;
         margin-bottom: 12px;
-        padding: 10px;
+        padding: 12px;
         border-radius: 8px;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.1);
         border: 1px solid #ccc;
+    }
+    tbody tr.fee-card:nth-child(even){
+        background: #d9e8ff;
     }
     tbody td{
         display: block;
         text-align: left;
-        padding: 6px 10px;
+        padding: 6px 8px;
         border: none;
     }
     tbody td::before{
         font-weight: bold;
         display: block;
         color: #0b3d91;
+        margin-bottom: 2px;
     }
     td:nth-child(1)::before { content: "Date"; }
-    td:nth-child(2)::before { content: "Slip"; }
+    td:nth-child(2)::before { content: "Slip No."; }
     td:nth-child(3)::before { content: "Amount"; }
     td:nth-child(4)::before { content: "Fee Type"; }
     td:nth-child(5)::before { content: "Session"; }
@@ -217,7 +219,7 @@ tbody tr:nth-child(even){
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Slip</th>
+                    <th>Slip No.</th>
                     <th>Amount</th>
                     <th>Fee Type</th>
                     <th>Session</th>
