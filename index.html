@@ -132,11 +132,18 @@ td {
 
     tbody tr {
         display: block;
-        background: white;
         margin-bottom: 12px;
         padding: 10px;
         border-radius: 8px;
         box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+
+    /* Alternating light-blue backgrounds for cards */
+    tbody tr:nth-child(odd) {
+        background: #e6f0ff;
+    }
+    tbody tr:nth-child(even) {
+        background: #ffffff;
     }
 
     tbody td {
