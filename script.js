@@ -38,7 +38,7 @@ async function login() {
         const masterRow = masterRows.find(r => r[1] === admission);
         const studentClass = masterRow?.[13] || "NA";
 
-        // Centered profile info
+        // Profile info centered
         document.getElementById("studentName").innerText = "Welcome, " + studentName;
         document.getElementById("class").innerText = "Class : " + studentClass;
         document.getElementById("adm").innerText = "Admission No : " + admission;
