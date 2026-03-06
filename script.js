@@ -5,114 +5,160 @@ const masterSheet = "Master Data 25 (New)";
 const feesSheet = "Fees Collection";
 const awSheet = "AW";
 
-async function login() {
-    const code = document.getElementById("loginCode").value.trim();
-    if (!code) { alert("Enter Login Code"); return; }
+async function login(){
 
-    document.getElementById("loginBtn").disabled = true;
-    document.getElementById("loader").style.display = "block";
+const code = document.getElementById("loginCode").value.trim();
 
-    try {
-        const awResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`);
-        const awData = await awResp.json();
-        const awRows = awData.values || [];
-
-        const studentRow = awRows.find(r => r[29]?.trim() === code);
-        if (!studentRow) {
-            alert("Invalid Login Code");
-            document.getElementById("loader").style.display = "none";
-            document.getElementById("loginBtn").disabled = false;
-            return;
-        }
-
-        const admission = studentRow[1] || "NA";
-        const studentName = studentRow[3] || "NA";
-        const father = studentRow[6] || "NA";
-        const mother = studentRow[5] || "NA";
-        const phone = studentRow[22] || "NA";
-        const address = studentRow[7] || "NA";
-
-        const masterResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`);
-        const masterData = await masterResp.json();
-        const masterRows = masterData.values || [];
-        const masterRow = masterRows.find(r => r[1] === admission);
-        const studentClass = masterRow?.[13] || "NA";
-
-        // Fill profile info
-        document.getElementById("studentName").innerText = "Welcome, " + studentName;
-        document.getElementById("class").innerText = "Class : " + studentClass;
-        document.getElementById("adm").innerText = "Admission No : " + admission;
-        document.getElementById("father").innerText = "Father's Name : " + father;
-        document.getElementById("mother").innerText = "Mother's Name : " + mother;
-        document.getElementById("phone").innerText = "Phone Number : " + phone;
-        document.getElementById("address").innerText = "Address : " + address;
-
-        const feesResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`);
-        const feesData = await feesResp.json();
-        const feeRows = feesData.values || [];
-
-        const isMobile = window.innerWidth <= 600;
-
-        // Show/hide containers
-        document.getElementById("feeTable").style.display = isMobile ? "none" : "table";
-        document.getElementById("feeCards").style.display = isMobile ? "block" : "none";
-
-        let table = "";
-        let cards = "";
-
-        for (let i = 1; i < feeRows.length; i++) {
-            const row = feeRows[i];
-            if (row?.[2] === admission) {
-                const r0 = row[0] || "NA";
-                const r1 = row[1] || "NA";
-                const r5 = row[5] || "NA";
-                const r6 = row[6] || "NA";
-                const r7 = row[7] || "NA";
-                const r8 = row[8] || "NA";
-                const r9 = row[9] || "NA";
-                const r10 = row[10] || "NA";
-
-                if (!isMobile) {
-                    table += `<tr>
-                        <td>${r1}</td>
-                        <td>${r0}</td>
-                        <td>${r5}</td>
-                        <td>${r6}</td>
-                        <td>${r7}</td>
-                        <td>${r8}</td>
-                        <td>${r9}</td>
-                        <td>${r10}</td>
-                    </tr>`;
-                } else {
-                    cards += `<div class="fee-card">
-                        <div><span>Date:</span>${r1}</div>
-                        <div><span>Slip No.:</span>${r0}</div>
-                        <div><span>Amount:</span>${r5}</div>
-                        <div><span>Fee Type:</span>${r6}</div>
-                        <div><span>Session:</span>${r7}</div>
-                        <div><span>Tuition Months:</span>${r8}</div>
-                        <div><span>Transport Months:</span>${r9}</div>
-                        <div><span>Exam Months:</span>${r10}</div>
-                    </div>`;
-                }
-            }
-        }
-
-        document.getElementById("feeTable").querySelector("tbody").innerHTML = table;
-        document.getElementById("feeCards").innerHTML = cards;
-
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("portal").style.display = "block";
-
-    } catch (err) {
-        console.error(err);
-        alert("Error loading data: " + err.message);
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("loginBtn").disabled = false;
-    }
+if(code==""){
+alert("Enter Login Code");
+return;
 }
 
-function logout() {
-    location.reload();
+document.getElementById("loginBtn").disabled = true;
+document.getElementById("loader").style.display = "block";
+
+try{
+
+/* FETCH AW SHEET */
+
+const awURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`;
+
+const awResp = await fetch(awURL);
+const awData = await awResp.json();
+const awRows = awData.values || [];
+
+let admission="";
+let studentName="";
+let father="";
+let mother="";
+let phone="";
+let address="";
+
+for(let i=1;i<awRows.length;i++){
+
+if(awRows[i][29] && awRows[i][29].trim()==code){
+
+admission = awRows[i][1] || "NA";
+studentName = awRows[i][3] || "NA";
+father = awRows[i][6] || "NA";
+mother = awRows[i][5] || "NA";
+phone = awRows[i][22] || "NA";
+address = awRows[i][7] || "NA";
+
+break;
+
+}
+
+}
+
+if(admission==""){
+alert("Invalid Login Code");
+document.getElementById("loader").style.display="none";
+document.getElementById("loginBtn").disabled=false;
+return;
+}
+
+/* FETCH MASTER DATA */
+
+const masterURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`;
+
+const masterResp = await fetch(masterURL);
+const masterData = await masterResp.json();
+const masterRows = masterData.values || [];
+
+let studentClass="NA";
+
+for(let i=1;i<masterRows.length;i++){
+
+if(masterRows[i][1]==admission){
+studentClass = masterRows[i][13] || "NA";
+break;
+}
+
+}
+
+/* FILL PROFILE */
+
+document.getElementById("studentName").innerText = "Welcome, "+studentName;
+document.getElementById("class").innerText = "Class : "+studentClass;
+document.getElementById("adm").innerText = "Admission No : "+admission;
+document.getElementById("father").innerText = "Father's Name : "+father;
+document.getElementById("mother").innerText = "Mother's Name : "+mother;
+document.getElementById("phone").innerText = "Phone Number : "+phone;
+document.getElementById("address").innerText = "Address : "+address;
+
+/* FETCH FEES DATA */
+
+const feesURL = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`;
+
+const feesResp = await fetch(feesURL);
+const feesData = await feesResp.json();
+const feeRows = feesData.values || [];
+
+let table="";
+let cards="";
+
+for(let i=1;i<feeRows.length;i++){
+
+if(feeRows[i][2]==admission){
+
+const r0 = feeRows[i][0] || "NA";
+const r1 = feeRows[i][1] || "NA";
+const r5 = feeRows[i][5] || "NA";
+const r6 = feeRows[i][6] || "NA";
+const r7 = feeRows[i][7] || "NA";
+const r8 = feeRows[i][8] || "NA";
+const r9 = feeRows[i][9] || "NA";
+const r10 = feeRows[i][10] || "NA";
+
+table += `<tr>
+<td>${r1}</td>
+<td>${r0}</td>
+<td>${r5}</td>
+<td>${r6}</td>
+<td>${r7}</td>
+<td>${r8}</td>
+<td>${r9}</td>
+<td>${r10}</td>
+</tr>`;
+
+cards += `<div class="fee-card">
+<div><b>Date:</b> ${r1}</div>
+<div><b>Slip No:</b> ${r0}</div>
+<div><b>Amount:</b> ${r5}</div>
+<div><b>Fee Type:</b> ${r6}</div>
+<div><b>Session:</b> ${r7}</div>
+<div><b>Tuition Months:</b> ${r8}</div>
+<div><b>Transport Months:</b> ${r9}</div>
+<div><b>Exam Months:</b> ${r10}</div>
+</div>`;
+
+}
+
+}
+
+/* INSERT DATA */
+
+document.getElementById("feeTable").innerHTML = table;
+document.getElementById("feeCards").innerHTML = cards;
+
+/* SHOW DASHBOARD */
+
+document.getElementById("loginBox").style.display="none";
+document.getElementById("loader").style.display="none";
+document.getElementById("portal").style.display="block";
+
+}catch(error){
+
+console.error(error);
+alert("Error loading data: "+error.message);
+document.getElementById("loader").style.display="none";
+document.getElementById("loginBtn").disabled=false;
+
+}
+
+}
+
+function logout(){
+location.reload();
 }
