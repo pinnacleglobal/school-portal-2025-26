@@ -7,7 +7,7 @@ const awSheet="AW";
 
 async function login(){
 
-let code=document.getElementById("loginCode").value;
+let code=document.getElementById("loginCode").value.trim();
 
 if(code==""){
 alert("Enter Login Code");
@@ -17,26 +17,28 @@ return;
 document.getElementById("loginBtn").disabled=true;
 document.getElementById("loader").style.display="block";
 
-let masterURL=`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`;
+/* GET AW DATA */
 
-let masterData=await fetch(masterURL).then(res=>res.json());
+let awURL=`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`;
 
-let rows=masterData.values;
+let awData=await fetch(awURL).then(res=>res.json());
 
-let student=null;
+let rows=awData.values;
+
+let admission=null;
 
 for(let i=1;i<rows.length;i++){
 
-if(rows[i][3]==code){
+if(rows[i][29]==code){   // Column AD
 
-student=rows[i];
+admission=rows[i][1];   // Column B = Admission No
 break;
 
 }
 
 }
 
-if(!student){
+if(!admission){
 
 alert("Invalid Login Code");
 
@@ -47,13 +49,13 @@ return;
 
 }
 
-let adm=student[0];
+/* LOAD STUDENT PORTAL */
 
-loadPortal(adm,student);
+loadPortal(admission);
 
 }
 
-async function loadPortal(adm,student){
+async function loadPortal(adm){
 
 document.getElementById("loginBox").style.display="none";
 
