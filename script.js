@@ -21,10 +21,10 @@ async function login() {
         if (!awResp.ok) throw new Error("Failed to fetch AW sheet");
         const awData = await awResp.json();
         const awRows = awData.values;
-        if (!awRows) throw new Error("AW sheet is empty");
+        if (!awRows) throw new Error("AW sheet empty");
 
         // Find student by login code (AD → index 29)
-        const studentRow = awRows.find(row => row[29]?.trim() === code);
+        const studentRow = awRows.find(r => r[29]?.trim() === code);
         if (!studentRow) {
             alert("Invalid Login Code");
             document.getElementById("loginBtn").disabled = false;
@@ -40,6 +40,7 @@ async function login() {
         const address = studentRow[7] || "NA";
         let photoUrl = studentRow[28] || "images/default.png";
 
+        // Convert Drive link to direct image
         if (photoUrl.includes("drive.google.com")) {
             const match = photoUrl.match(/\/d\/([a-zA-Z0-9_-]+)\//);
             if (match?.[1]) photoUrl = `https://drive.google.com/uc?export=view&id=${match[1]}`;
@@ -47,10 +48,9 @@ async function login() {
 
         // Fetch Master sheet for class
         const masterResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`);
-        if (!masterResp.ok) throw new Error("Failed to fetch Master sheet");
         const masterData = await masterResp.json();
         const masterRows = masterData.values || [];
-        const masterRow = masterRows.find(row => row[1] === admission);
+        const masterRow = masterRows.find(r => r[1] === admission);
         const studentClass = masterRow?.[13] || "NA";
 
         // Populate student info
@@ -68,7 +68,6 @@ async function login() {
 
         // Fetch Fees sheet
         const feesResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`);
-        if (!feesResp.ok) throw new Error("Failed to fetch Fees sheet");
         const feesData = await feesResp.json();
         const feeRows = feesData.values || [];
 
@@ -90,14 +89,16 @@ async function login() {
         }
         document.getElementById("feeTable").innerHTML = table;
 
+        // Hide login, show portal
+        document.getElementById("loginBox").style.display = "none";
         document.getElementById("loader").style.display = "none";
         document.getElementById("portal").style.display = "block";
 
     } catch (err) {
         console.error(err);
         alert("Error loading data: " + err.message);
-        document.getElementById("loader").style.display = "none";
         document.getElementById("loginBtn").disabled = false;
+        document.getElementById("loader").style.display = "none";
     }
 }
 
