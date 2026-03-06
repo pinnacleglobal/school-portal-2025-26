@@ -121,7 +121,7 @@ td {
 
 /* MOBILE CARDS */
 @media(max-width:600px) {
-    table, thead, tbody {
+    table {
         display: none;
     }
     #feeCards {
@@ -188,7 +188,7 @@ td {
 
     <div class="table-container">
         <!-- Desktop Table -->
-        <table>
+        <table id="feeTable">
             <thead>
                 <tr>
                     <th>Date</th>
@@ -201,10 +201,11 @@ td {
                     <th>Exam</th>
                 </tr>
             </thead>
-            <tbody id="feeTable"></tbody>
+            <tbody></tbody>
         </table>
+
         <!-- Mobile Cards -->
-        <div id="feeCards"></div>
+        <div id="feeCards" style="display:none"></div>
     </div>
 
     <div class="logout">
