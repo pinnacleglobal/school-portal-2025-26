@@ -5,6 +5,27 @@ const masterSheet = "Master Data 25 (New)";
 const feesSheet = "Fees Collection";
 const awSheet = "AW";
 
+// Convert Google Drive URL to direct image URL
+function convertDriveUrl(url) {
+    if (!url) return "images/default.png";
+    let fileId = null;
+
+    // /d/FILE_ID/ style
+    const match1 = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (match1?.[1]) fileId = match1[1];
+
+    // open?id=FILE_ID style
+    const match2 = url.match(/open\?id=([a-zA-Z0-9_-]+)/);
+    if (match2?.[1]) fileId = match2[1];
+
+    // /file/d/FILE_ID/view style
+    const match3 = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (match3?.[1]) fileId = match3[1];
+
+    if (fileId) return `https://drive.google.com/uc?export=view&id=${fileId}`;
+    return url; // fallback, if not a recognized Drive URL
+}
+
 async function login() {
     const code = document.getElementById("loginCode").value.trim();
     if (!code) { alert("Enter Login Code"); return; }
@@ -13,6 +34,7 @@ async function login() {
     document.getElementById("loader").style.display = "block";
 
     try {
+        // Fetch AW sheet
         const awResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${awSheet}?key=${apiKey}`);
         const awData = await awResp.json();
         const awRows = awData.values || [];
@@ -32,25 +54,19 @@ async function login() {
         const phone = studentRow[22] || "NA";
         const address = studentRow[7] || "NA";
 
-        // Convert Google Drive URL to direct image
-        let photoUrl = studentRow[28] || "images/default.png";
-        if (photoUrl.includes("drive.google.com")) {
-            let fileId = null;
-            const match1 = photoUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            const match2 = photoUrl.match(/open\?id=([a-zA-Z0-9_-]+)/);
-            if (match1?.[1]) fileId = match1[1];
-            else if (match2?.[1]) fileId = match2[1];
-            if (fileId) photoUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-        }
+        // Handle Google Drive photo URL
+        const photoUrlRaw = studentRow[28] || "";
+        const photoUrl = convertDriveUrl(photoUrlRaw);
 
         const imgEl = document.getElementById("photo");
         const loaderEl = document.getElementById("photoLoader");
         loaderEl.style.display = "block";
-        imgEl.onload = () => loaderEl.style.display = "none";
-        imgEl.src = photoUrl;
-        imgEl.onerror = () => { imgEl.src = "images/default.png"; loaderEl.style.display = "none"; };
 
-        // Master sheet to get class
+        imgEl.onload = () => loaderEl.style.display = "none";
+        imgEl.onerror = () => { imgEl.src = "images/default.png"; loaderEl.style.display = "none"; };
+        imgEl.src = photoUrl;
+
+        // Fetch Master sheet for class info
         const masterResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${masterSheet}?key=${apiKey}`);
         const masterData = await masterResp.json();
         const masterRows = masterData.values || [];
@@ -65,7 +81,7 @@ async function login() {
         document.getElementById("phone").innerText = "Phone : " + phone;
         document.getElementById("address").innerText = "Address : " + address;
 
-        // Fees
+        // Fetch Fees sheet
         const feesResp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${feesSheet}?key=${apiKey}`);
         const feesData = await feesResp.json();
         const feeRows = feesData.values || [];
