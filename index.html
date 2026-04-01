@@ -1,21 +1,30 @@
 <style>
-  .announcement {
-    font-size: 1.2rem; /* Default size for Desktop */
-    font-weight: bold;
-    color: #d9534f; /* A subtle red to grab attention */
+  .urgent-notice {
+    /* Bold and centered */
+    font-weight: 800;
     text-align: center;
+    line-height: 1.2;
     padding: 20px;
+    margin: 20px 0;
+    color: #b30000; /* Deep red for urgency */
+    
+    /* Responsive sizing */
+    font-size: 2.5rem; /* Large on desktop */
   }
 
-  /* This targets mobile phones specifically */
-  @media only screen and (max-width: 600px) {
-    .announcement {
-      font-size: 2rem; /* Much larger on mobile */
-      line-height: 1.4;
+  /* Specific Mobile Overrides */
+  @media only screen and (max-width: 480px) {
+    .urgent-notice {
+      font-size: 3.5rem; /* Extra large on mobile */
+      letter-spacing: -1px; /* Tightens text for a "headline" look */
+      word-wrap: break-word;
     }
   }
 </style>
 
-<div class="announcement">
-  The 2025-26 is now closed. Please contact the school for the new portal of session 2026-27.
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<div class="urgent-notice">
+  The 2025-26 is now closed. <br>
+  <span style="color: black; font-size: 0.8em;">Please contact the school for the new portal of session 2026-27.</span>
 </div>
